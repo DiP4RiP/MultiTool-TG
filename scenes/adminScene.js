@@ -60,12 +60,14 @@ inputSub.enter(async ctx => {
     await ctx.editMessageText(`Имя: ${ctx.scene.state.status}\nТип пользователя: ${ctx.scene.state.status}\nВыберите направления из списка и нажмите ✅ для подтверждения`, listBtn)
 })
 
-Object.keys(enums.subjects).forEach(element => {
+let subList = Object.keys(enums.subjects);
+let currSub = [];
+subList.forEach(element => {
     inputSub.action(element, async ctx => {
         let subListBtn = [];
-        let subList = Object.keys(enums.subjects);
         let i = subList.indexOf(element);
         if(i >= 0) {
+            currSub.push(subList[i])
             subList.splice(i,1);
         }
         subList.forEach(element => {
@@ -77,9 +79,14 @@ Object.keys(enums.subjects).forEach(element => {
         } else {
             listBtn = Markup.inlineKeyboard([Markup.button.callback("✅ Готово", 'confirm')])
         }
-         
+        ctx.scene.state.sub = currSub;
+        console.log(currSub);
         await ctx.editMessageText(`Имя: ${ctx.scene.state.status}\nТип пользователя: ${ctx.scene.state.status}\nВыбрано направление, выберете еще или нажмите ✅ для подтверждения`, listBtn)
     })
+})
+
+inputSub.action('confirm', async ctx => {
+    console.log(ctx.scene.state.sub);
 })
 
 debugLoggin.enter(async ctx => {
