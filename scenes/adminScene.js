@@ -16,4 +16,4 @@ admin.action('student', async (ctx) => {
     ctx.scene.enter('student', { user: ctx.scene.state.user });
 })
 
-module.exports = admin;
+module.exports = [admin];

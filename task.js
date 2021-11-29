@@ -8,8 +8,6 @@ class Task{
         this.task = task;
         this.time = time;
         this.status = false;
-        setTaskToUser(this);
-        // taskMap.set(sub, this)
     }
 }
 

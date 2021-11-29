@@ -1,6 +1,7 @@
 const fs = require('fs');;
 const Arr = require('./arr');
-const enums = require('./enums')
+const enums = require('./enums');
+const { indexOf } = require('./scenes/adminScene');
 
 let users = new Arr();
 
@@ -10,35 +11,43 @@ class BaseUser {
     pass;
     tgUserID;
     status;
+    task = [];
     /**
      * @param {enums.status} status
      * @param {enums.subjects} sub
      * @param {string} name
      */
-    constructor(name, sub, status) {
+    constructor(name, status, sub, pass, id, task) {
         this.name = name;
         this.subjects = sub;
         this.status = status
-        if (this.pass === undefined) {
+        if (pass === undefined && id === undefined) {
             this.pass = this.generatePass();
         }
-        console.log(`Для ${this.name} создан пароль - ${this.pass}`);
+        else {
+            this.pass = pass;
+            this.tgUserID = id;
+        }
+        if (task !== undefined){
+            this.task = task;
+        }
+        console.log(`Пароль для ${this.name} - ${this.pass}`);
         users.push(this);
 
     }
     /**
      * @param {number} id
      */
-    set tgUserID(id){
-        this.tgUserID = id;
+    writeTgID(id){
+        let p = this;
+        p.tgUserID = id;
+        users.set(users.indexOf(this), p)
     }
 
-    createTask(task){
-        students.forEach(element => {
-            if (task.subject === element.subjects){
-                element.tasks = task;
-            }
-        });
+    addTask(task){
+        let p = this;
+        p.task.push(task)
+        users.set(users.indexOf(this), p)
     }
 
     generatePass() {
@@ -55,33 +64,22 @@ class BaseUser {
 
 class Admin extends BaseUser {
     constructor(name, id) {
-        super(name, enums.subjects.ALL, enums.status.ADMIN);
+        super(name, enums.status.ADMIN, enums.subjects);
         this.tgUserID = id;
-        
     }
 
-    // createUser(name, sub, post) {
-    //     let p = new User(name, sub, post)
-    //     if (userMap.has(p.pass)) {
-    //         console.log("Пароль уже используется");
-    //     }
-    //     else {
-    //         userMap.set(p.pass, p);
-    //         console.log(`${p.name} добавлен под паролем ${p.pass}`);
-            
-    //     }
-    // }
+    createUser(name, status, sub) {
+        let p = new BaseUser(name, status, sub)
+        console.log(`${p.name} добавлен под паролем ${p.pass}`);
+    }
 
-    // deleteUser(pass) {
-    //     if (userMap.has(pass)) {
-    //         userMap.delete(pass);
-    //         console.log(`${userMap.get(pass).name} удален`);
-    //         saveToFile(userMap);
-    //     }
-    //     else {
-    //         console.log(`${userMap.get(pass).name} не найден`);
-    //     }
-    // }
+    deleteUser(name) {
+        users.remove((item, index) => {
+            if (item.indexOf(name) !== -1){
+                return true
+            }
+        })
+    }
 }
 
 module.exports = { Admin, BaseUser};

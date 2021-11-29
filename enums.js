@@ -1,5 +1,4 @@
 const subjects = {
-    ALL: "admin",
     CPP: "Программирование C++",
     JS: "Программирование JavaScript"
 }

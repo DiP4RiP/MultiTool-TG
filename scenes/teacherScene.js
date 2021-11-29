@@ -1,8 +1,8 @@
 const keys = require('../keyboards')
-const taskExport = require('../task')
+const Task = require('../task')
 const enums = require('../enums')
 const { Scenes } = require('telegraf');
-const { User, userMap } = require('../user');
+const { users } = require('../user');
 
 const teacher = new Scenes.BaseScene('teacher');
 const chooseSubject = new Scenes.BaseScene('chooseSubject');
@@ -14,7 +14,7 @@ let user;
 
 teacher.enter(async (ctx) => {
     user = ctx.scene.state.user;
-    ctx.reply(`${user.name}, вход успешный, должность ${user.post}. Ваши предметы: ${user.sub}`, keys.actionsTeacher);
+    ctx.reply(`${user.name}, вход успешный, должность ${user.status}. Ваши предметы: ${Object.values(user.subjects)}`, keys.actionsTeacher);
 });
 
 teacher.action('createTask', async (ctx) => {
@@ -41,7 +41,7 @@ chooseSubject.enter(async (ctx) => {
 Object.entries(enums.subjects).forEach(async (elem) => {
     chooseSubject.action(elem[0], async (ctx) => {
         ctx.editMessageText(`Вы выбрали ${elem[1]}`);
-        ctx.scene.enter('inputTask', { currSub: elem });
+        ctx.scene.enter('inputTask', { currSub: elem[1] });
     })
 })
 
@@ -62,7 +62,7 @@ inputDeadline.on('text', async (ctx) => {
     let task = ctx.scene.state.currTask;
     let dead = ctx.message.text;
     ctx.scene.state.curDeadline = dead;
-    ctx.reply(`Текующее задание:\nПредмет: ${sub[1]}\nЗадание: ${task}\nДедлайн: ${ctx.message.text}`, keys.confrimTask, { curDeadline: dead });
+    ctx.reply(`Текующее задание:\nПредмет: ${sub}\nЗадание: ${task}\nДедлайн: ${ctx.message.text}`, keys.confrimTask, { curDeadline: dead });
 })
 
 inputDeadline.action('confrim', async (ctx) => {
@@ -77,14 +77,16 @@ confrimCreate.enter(async (ctx) => {
     let sub = ctx.scene.state.currSub;
     let task = ctx.scene.state.currTask
     let deadline = ctx.scene.state.curDeadline;
-    let p = new taskExport.Task(sub, task, deadline);
-    ctx.reply(`Задание добавлено для направления: \n${sub[1]}`);
-    userMap.forEach(elem => {
-        if (elem.sub === sub && elem.tgUserID !== undefined){
-            ctx.telegram.sendMessage(elem.tgUserID, `Вы получили задание по направлению: ${sub[1]}\nЗадание: ${task}`)
+    let newtask = new Task(sub, task, deadline);
+    ctx.reply(`Задание добавлено для направления: \n${sub}`);
+    users.forEach(elem => {
+        if (elem.subjects === sub ){
+            elem.addTask(newtask)
+            if (elem.tgUserID !== undefined){
+                ctx.telegram.sendMessage(elem.tgUserID, `Вы получили задание по направлению: ${sub}\nЗадание: ${task}`)
+            }
         }
     })
-    //ctx.telegram.sendMessage(395483849, "Aboba");
 })
 
-module.exports = { teacher, chooseSubject, inputTask, inputDeadline, confrimCreate };
+module.exports = [teacher, chooseSubject, inputTask, inputDeadline, confrimCreate];
