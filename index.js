@@ -1,6 +1,6 @@
 const { Telegraf, Scenes, session } = require('telegraf');
 const fs = require('fs');
-const bot = new Telegraf('1783153297:AAEXHFZePlFTBI827xsXgi7CpKONqfR-Z6E');
+const bot = new Telegraf('');
 const UsersApi = require('./user')
 const enums = require('./enums')
 const adminScene = require('./scenes/adminScene');
