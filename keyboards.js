@@ -1,16 +1,20 @@
 const {Markup} = require('telegraf')
-const User = require('./user')
 const enums = require('./enums')
+const backBtn = Markup.button.callback("↩ Назад", 'back')
 
+const chooseAdmin = Markup.inlineKeyboard([
+    [Markup.button.callback('💼\nСоздать пользователя', 'createUser'), Markup.button.callback('📤\nУдалить пользователя', 'deleteUser')],
+    [Markup.button.callback('🔧\nОтладка', 'debug')]
+])
 
 const chooseRole = Markup.inlineKeyboard([
-    Markup.button.callback('Учитель', 'teacher'),
-    Markup.button.callback('Ученик', 'student')
+    [Markup.button.callback('Учитель', 'teacher'), Markup.button.callback('Ученик', 'student')],
+    [backBtn]
 ])
 
 const actionsTeacher = Markup.inlineKeyboard([
-    Markup.button.callback('📧 Создать задание', 'createTask'),
-    Markup.button.callback('📁 Список заданий', 'taskList')
+    [Markup.button.callback('📧 Создать задание', 'createTask'), Markup.button.callback('📁 Список заданий', 'taskList')],
+    [backBtn]
 ])
 
 const confrimTask = Markup.inlineKeyboard([
@@ -25,6 +29,6 @@ f.forEach((elem) => {
     
 })
 
-const subTeacher = Markup.inlineKeyboard([subBtn])
+const subTeacher = Markup.inlineKeyboard([subBtn, [backBtn]],)
 
-module.exports = {actionsTeacher, chooseRole, subTeacher, confrimTask};
+module.exports = {actionsTeacher, chooseRole, subTeacher, confrimTask, chooseAdmin};

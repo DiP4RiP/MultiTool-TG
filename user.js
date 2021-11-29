@@ -73,9 +73,9 @@ class Admin extends BaseUser {
         console.log(`${p.name} добавлен под паролем ${p.pass}`);
     }
 
-    deleteUser(name) {
+    deleteUser(user) {
         users.remove((item, index) => {
-            if (item.indexOf(name) !== -1){
+            if (item.indexOf(user) !== -1){
                 return true
             }
         })
