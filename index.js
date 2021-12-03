@@ -1,12 +1,12 @@
-const { Telegraf, Scenes, session } = require('telegraf');
+const { Telegraf, Scenes, session, Markup } = require('telegraf');
 const bot = new Telegraf('1783153297:AAEXHFZePlFTBI827xsXgi7CpKONqfR-Z6E');
 const UsersApi = require('./user')
 const initUserData = require('./initData')
+initUserData() //Подгрузка файлов из бинарника
 const adminScene = require('./scenes/adminScene');
 const studentScene = require('./scenes/studentScene');
 const teacherScene = require('./scenes/teacherScene');
 
-initUserData() //Подгрузка файлов из бинарника
 
 const kisID = 1370364784 //запасной тестовый id
 
@@ -15,9 +15,8 @@ const stage = new Scenes.Stage(adminScene.concat(teacherScene, studentScene)); /
 bot.use(session())
 bot.use(stage.middleware());
 
-
 bot.start(async (ctx) => { //Первый запуск
-    await ctx.reply('Добро пожаловать в систему "Умный университет", введите пароль для продолжения');
+    await ctx.reply('Добро пожаловать в систему "Умный университет", введите пароль для продолжения');    
 });
 
 bot.on('text', async (ctx) => { //Ввод пароль и переадресация в нужную сцену

@@ -1,7 +1,6 @@
 const fs = require('fs');;
 const Arr = require('./arr');
 const enums = require('./enums');
-const { indexOf } = require('./scenes/adminScene');
 
 let users = new Arr();
 
@@ -74,11 +73,7 @@ class Admin extends BaseUser {
     }
 
     deleteUser(user) {
-        users.remove((item, index) => {
-            if (item.indexOf(user) !== -1){
-                return true
-            }
-        })
+
     }
 }
 
