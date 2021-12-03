@@ -102,28 +102,37 @@ async function createUserFunc() {
 
 async function createUserPage() {
 
-    let pageBtn = new Map();
+    let pageUsers = new Map();
     let usersArr = users
     let objUsers = Object.values(users)
     objUsers.splice(objUsers.length-2, 2); 
     for (let i = 0; i < objUsers.length/3; i++){
         let userPage = [];
-        objUsers.splice(0,3).forEach(elem => {
-            userPage.push(Markup.button.callback(elem.name, elem.pass));
+        objUsers.splice(0,3).forEach(async elem => {
+            userPage.push(elem);
         })
-        pageBtn.set(i, [userPage, [Markup.button.callback('⬅', 'backPage'), Markup.button.callback(i, 'currPage'), Markup.button.callback('➡', 'nextPage')]]);
+        pageUsers.set(i, userPage);
     }
-    return pageBtn;
+    return pageUsers;
 }
 
-async function getUserPageFromPage(page) {
-    return await (await createUserPage()).get(page)
+async function createKeyboard(page) {
+    let userPagesMap = createUserPage();
+    let arrToBtn = []
+    userPagesMap.get(0).forEach(elem => {
+        arrToBtn.push(Markup.button.callback(elem.name, elem.pass))
+    })
+    
+    Markup.inlineKeyboard([])
+
+    let menu = [Markup.button.callback('⬅', 'backPage'), Markup.button.callback(page, 'currPage'), Markup.button.callback('➡', 'nextPage')]
 }
 
 async function deleteUserFunc() {
     let page = 0;
     deleteUser.enter(async ctx => {
-        await ctx.editMessageText('Для удаления пользователя, выберите пользователя из списка ниже', Markup.inlineKeyboard(await getUserPageFromPage(page))) //Отправка сообщения с выводом клавиатуры ролей
+        await ctx.editMessageText('Для удаления пользователя, выберите пользователя из списка ниже') //Отправка сообщения с выводом клавиатуры ролей
+        createKeyboard(0)
     })
 
     users.forEach(element => {
