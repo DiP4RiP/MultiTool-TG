@@ -104,23 +104,20 @@ async function createUserFunc() {
 async function createUserPage() {
 
     let pageUsers = new Map();
-    let usersArr = users
     let objUsers = Object.values(users)
     objUsers.splice(objUsers.length-2, 2); 
     for (let i = 0; i < objUsers.length/3; i++){
-        let userPage = [];
-        objUsers.splice(0,3).forEach(async elem => {
-            userPage.push(elem);
-        })
-        pageUsers.set(i, userPage);
+        let startIndex = i*3;
+        pageUsers.set(i, objUsers.slice(startIndex, startIndex+3));
     }
+    console.log(pageUsers);
     return pageUsers;
 }
 
 async function createKeyboard(page) {
     let userPagesMap = await createUserPage();
     let arrToBtn = []
-    userPagesMap.get(0).forEach(elem => {
+    await userPagesMap.get(page).forEach(elem => {
         arrToBtn.push(Markup.button.callback(elem.name, elem.pass))
     })
     let menu = [Markup.button.callback('⬅', 'backPage'), Markup.button.callback(page, 'currPage'), Markup.button.callback('➡', 'nextPage')]
@@ -142,6 +139,23 @@ async function deleteUserFunc() {
             await ctx.scene.enter('admin', {user: user});
         })
     });
+
+    deleteUser.action('backPage', async ctx => {
+        if (--page >= 0){
+            await ctx.editMessageText('Для удаления пользователя, выберите пользователя из списка ниже', await createKeyboard(page));
+        }
+    })
+
+    deleteUser.action('currPage', async ctx => {
+        await ctx.scene.enter('admin', {user: user});
+    })
+
+    deleteUser.action('nextPage', async ctx => {
+        let userLen = users.get('length');
+        if (++page < userLen/3){
+            await ctx.editMessageText('Для удаления пользователя, выберите пользователя из списка ниже', await createKeyboard(page));
+        }
+    })
 
 }
 
