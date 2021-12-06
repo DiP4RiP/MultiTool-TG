@@ -94,9 +94,10 @@ async function createUserFunc() {
     })
 
     inputSub.action('confirm', async ctx => {
+        console.log(user);
         user.createUser(ctx.scene.state.userName, ctx.scene.state.status, ctx.scene.state.sub)
         await ctx.editMessageText(`Создан пользователь.\nИмя: ${ctx.scene.state.userName}\nТип пользователя: ${ctx.scene.state.status}\nНаправления: ${ctx.scene.state.sub}`);
-        await ctx.scene.enter('admin');
+        await ctx.scene.enter('admin', {user: user});
     })
 }
 
@@ -117,28 +118,28 @@ async function createUserPage() {
 }
 
 async function createKeyboard(page) {
-    let userPagesMap = createUserPage();
+    let userPagesMap = await createUserPage();
     let arrToBtn = []
     userPagesMap.get(0).forEach(elem => {
         arrToBtn.push(Markup.button.callback(elem.name, elem.pass))
     })
-    
-    Markup.inlineKeyboard([])
-
     let menu = [Markup.button.callback('⬅', 'backPage'), Markup.button.callback(page, 'currPage'), Markup.button.callback('➡', 'nextPage')]
+    
+    return Markup.inlineKeyboard([arrToBtn, menu])
 }
 
 async function deleteUserFunc() {
     let page = 0;
     deleteUser.enter(async ctx => {
-        await ctx.editMessageText('Для удаления пользователя, выберите пользователя из списка ниже') //Отправка сообщения с выводом клавиатуры ролей
-        createKeyboard(0)
+        await ctx.editMessageText('Для удаления пользователя, выберите пользователя из списка ниже', await createKeyboard(0)) //Отправка сообщения с выводом клавиатуры ролей
+        
     })
 
-    users.forEach(element => {
+    await users.forEach(element => {
         deleteUser.action(element.pass, async ctx => {
             await ctx.editMessageText('Пользователь удален')
-            //await user.deleteUser(element);
+            await user.deleteUser(element);
+            await ctx.scene.enter('admin', {user: user});
         })
     });
 
@@ -152,7 +153,7 @@ async function debugFunc() {
     Object.values(enums.status).forEach(element => { //Выбор пользователя из списка status
         if (element !== enums.status.ADMIN) {
             debugLoggin.action(element, async (ctx) => {
-                await ctx.scene.enter(element, { user: ctx.scene.state.user }); //Переход в сцену учителя
+                await ctx.scene.enter(element, { user: user }); //Переход в сцену учителя
             })
         }
     });

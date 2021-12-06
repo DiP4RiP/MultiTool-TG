@@ -1,12 +1,13 @@
+const config = require('./config.json')
 const { Telegraf, Scenes, session, Markup } = require('telegraf');
-const bot = new Telegraf('1783153297:AAEXHFZePlFTBI827xsXgi7CpKONqfR-Z6E');
-const UsersApi = require('./user')
+const bot = new Telegraf(config.token);
 const initUserData = require('./initData')
 initUserData() //Подгрузка файлов из бинарника
+const UsersApi = require('./user')
+
 const adminScene = require('./scenes/adminScene');
 const studentScene = require('./scenes/studentScene');
 const teacherScene = require('./scenes/teacherScene');
-
 
 const kisID = 1370364784 //запасной тестовый id
 

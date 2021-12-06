@@ -74,4 +74,8 @@ typings/
 
 # FuseBox cache
 .fusebox/
+
 data.bin
+config.json
+.idea
+.vscode

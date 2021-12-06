@@ -1,4 +1,3 @@
-const fs = require('fs');;
 const Arr = require('./arr');
 const enums = require('./enums');
 
@@ -27,7 +26,7 @@ class BaseUser {
             this.pass = pass;
             this.tgUserID = id;
         }
-        if (task !== undefined){
+        if (task !== undefined) {
             this.task = task;
         }
         console.log(`Пароль для ${this.name} - ${this.pass}`);
@@ -37,13 +36,13 @@ class BaseUser {
     /**
      * @param {number} id
      */
-    writeTgID(id){
+    writeTgID(id) {
         let p = this;
         p.tgUserID = id;
         users.set(users.indexOf(this), p)
     }
 
-    addTask(task){
+    addTask(task) {
         let p = this;
         p.task.push(task)
         users.set(users.indexOf(this), p)
@@ -73,9 +72,14 @@ class Admin extends BaseUser {
     }
 
     deleteUser(user) {
-
+        users.forEach(elem => {
+            console.log(elem == user);
+            if (elem == user){
+                users.splice(users.indexOf(user), 1)
+            }
+        });
     }
 }
 
-module.exports = { Admin, BaseUser};
+module.exports = { Admin, BaseUser };
 module.exports.users = users
