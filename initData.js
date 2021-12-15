@@ -1,8 +1,8 @@
 const fs = require('fs')
-const {users, BaseUser, Admin} = require('./user')
+const {users, BaseUser, Admin} = require('./classes/user')
 const dipID = 395483849
 const path = "./data.bin";
-const enums = require('./enums');
+const enums = require('./helpers/enums');
 
 users.on('change', (event) => {
     saveToFile(users);

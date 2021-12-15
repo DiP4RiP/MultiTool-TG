@@ -1,5 +1,5 @@
-const Arr = require('./arr');
-const enums = require('./enums');
+const Arr = require('../helpers/arr');
+const enums = require('../helpers/enums');
 
 let users = new Arr();
 

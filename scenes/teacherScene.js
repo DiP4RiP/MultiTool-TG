@@ -1,8 +1,8 @@
-const keys = require('../keyboards')
-const Task = require('../task')
-const enums = require('../enums')
+const keys = require('../helpers/keyboards')
+const Task = require('../classes/task')
+const enums = require('../helpers/enums')
 const { Scenes } = require('telegraf');
-const { users } = require('../user');
+const { users } = require('../classes/user');
 
 const teacher = new Scenes.BaseScene('teacher');
 const chooseSubject = new Scenes.BaseScene('chooseSubject');

@@ -1,5 +1,5 @@
-const keys = require('../keyboards')
-const task = require('../task')
+const keys = require('../helpers/keyboards')
+const task = require('../classes/task')
 const { Scenes, Markup } = require('telegraf');
 
 const student = new Scenes.BaseScene('student');

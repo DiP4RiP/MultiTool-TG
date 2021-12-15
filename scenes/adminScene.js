@@ -1,8 +1,7 @@
-const keyboards = require('../keyboards')
+const keyboards = require('../helpers/keyboards')
 const { Scenes, Markup } = require('telegraf');
-const enums = require('../enums');
-const { users } = require('../user');
-const Arr = require('../arr');
+const enums = require('../helpers/enums');
+const { users } = require('../classes/user');
 
 const admin = new Scenes.BaseScene('admin');
 const debugLoggin = new Scenes.BaseScene('debugLoggin');
@@ -69,32 +68,33 @@ async function createUserFunc() {
     })
 
     let subList = Object.keys(enums.subjects);
-    let currSub = [];
+
     subList.forEach(element => {
+        splitSubList = subList.slice();
         inputSub.action(element, async ctx => {
-            let subListBtn = [];
-            let i = subList.indexOf(element);
+
+            let currSub = []; //Выбранные преметы
+            let subListBtn = []; //Список предметов кнопки
+
+            let i = splitSubList.indexOf(element);
             if (i >= 0) {
-                currSub.push(subList[i])
-                subList.splice(i, 1);
+                currSub.push(splitSubList[i])
+                splitSubList.slice(i, 1);
+                console.log(splitSubList);
             }
-            subList.forEach(element => {
+            
+            splitSubList.forEach(element => {
                 subListBtn.push(Markup.button.callback(element, element));
             })
-            let listBtn;
-            if (subListBtn.length > 0) {
-                listBtn = Markup.inlineKeyboard([subListBtn, [Markup.button.callback("✅ Готово", 'confirm')]])
-            } else {
-                listBtn = Markup.inlineKeyboard([Markup.button.callback("✅ Готово", 'confirm')])
-            }
+           
+            let listBtn = Markup.inlineKeyboard([subListBtn, [Markup.button.callback("✅ Готово", 'confirm')]])
+         
             ctx.scene.state.sub = currSub;
-            console.log(currSub);
             await ctx.editMessageText(`Имя: ${ctx.scene.state.userName}\nТип пользователя: ${ctx.scene.state.status}\nВыбрано направление ${currSub}, выберете еще или нажмите ✅ для подтверждения`, listBtn)
         })
     })
 
     inputSub.action('confirm', async ctx => {
-        console.log(user);
         user.createUser(ctx.scene.state.userName, ctx.scene.state.status, ctx.scene.state.sub)
         await ctx.editMessageText(`Создан пользователь.\nИмя: ${ctx.scene.state.userName}\nТип пользователя: ${ctx.scene.state.status}\nНаправления: ${ctx.scene.state.sub}`);
         await ctx.scene.enter('admin', {user: user});
@@ -110,7 +110,6 @@ async function createUserPage() {
         let startIndex = i*3;
         pageUsers.set(i, objUsers.slice(startIndex, startIndex+3));
     }
-    console.log(pageUsers);
     return pageUsers;
 }
 
@@ -136,7 +135,8 @@ async function deleteUserFunc() {
         deleteUser.action(element.pass, async ctx => {
             await ctx.editMessageText('Пользователь удален')
             await user.deleteUser(element);
-            await ctx.scene.enter('admin', {user: user});
+            page=0;
+            await ctx.scene.enter('deleteUser');
         })
     });
 

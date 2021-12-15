@@ -3,7 +3,7 @@ const { Telegraf, Scenes, session, Markup } = require('telegraf');
 const bot = new Telegraf(config.token);
 const initUserData = require('./initData')
 initUserData() //Подгрузка файлов из бинарника
-const UsersApi = require('./user')
+const UsersApi = require('./classes/user')
 
 const adminScene = require('./scenes/adminScene');
 const studentScene = require('./scenes/studentScene');
